@@ -1,0 +1,33 @@
+{
+  "title": "Financial Basics for Rural Households",
+  "description": "Simple lessons on savings, bank accounts, and avoiding fraud.",
+  "lessons": [
+    {
+      "title": "Why Saving is Important",
+      "content": "Even small amounts saved regularly can help in emergencies like illness, crop loss, or school fees. Keep savings in a safe place like a bank, not in cash at home.",
+      "quiz": [
+        {
+          "question": "Why is saving money important?",
+          "options": [
+            "For emergencies and future needs",
+            "To waste on unnecessary things",
+            "So that others can borrow it easily"
+          ],
+          "answerIndex": 0
+        }
+      ]
+    },
+    {
+      "title": "Opening a Bank Account",
+      "content": "You can open a bank account with Aadhaar and basic KYC. Zero-balance accounts like Jan Dhan make it easy to keep money safe and receive government benefits directly.",
+      "quiz": [
+        {
+          "question": "Which document is commonly needed for opening a bank account?",
+          "options": ["Aadhaar card", "School bag", "Ration card only"],
+          "answerIndex": 0
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,8 @@
+Error generating AI summary. Please check your API key and try again.
+
+ELI10:
+Unable to process document with AI at this time.
+
+Key points:
+API error occurred
+Check API key configuration

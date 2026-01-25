@@ -1,0 +1,47 @@
+[
+  {
+    "id": "pm-kisan",
+    "name": "PM-KISAN Samman Nidhi",
+    "description": "Income support to all landholding farmer families in the country.",
+    "eligibility_rules": "Small and marginal farmers owning cultivable land. Excludes income tax payers and institutional land holders.",
+    "documents_required": ["Aadhaar card", "Bank passbook", "Land records"],
+    "benefit": "Rs. 6,000 per year in three equal instalments directly to bank account.",
+    "steps": [
+      "Collect Aadhaar, bank details and land records.",
+      "Apply at local agriculture office or online PM-KISAN portal.",
+      "Track application status via portal or helpline."
+    ]
+  },
+  {
+    "id": "pm-ujjwala",
+    "name": "Pradhan Mantri Ujjwala Yojana",
+    "description": "Provides LPG connections to women from poor households.",
+    "eligibility_rules": "Woman from BPL household without LPG connection in her household.",
+    "documents_required": [
+      "Aadhaar card",
+      "BPL card / SECC list proof",
+      "Bank account details",
+      "Ration card"
+    ],
+    "benefit": "Free LPG connection with financial assistance for first refill and stove.",
+    "steps": [
+      "Visit nearest LPG distributor with required documents.",
+      "Fill Ujjwala Yojana application form.",
+      "Complete KYC and connection formalities."
+    ]
+  },
+  {
+    "id": "pm-jdy",
+    "name": "Pradhan Mantri Jan Dhan Yojana",
+    "description": "National mission for financial inclusion through zero balance bank accounts.",
+    "eligibility_rules": "Indian citizens above 10 years without a bank account.",
+    "documents_required": ["Aadhaar card or other ID proof", "Address proof", "Passport size photo"],
+    "benefit": "Zero balance account, RuPay card, accident insurance, overdraft facility.",
+    "steps": [
+      "Visit nearest bank branch or CSP.",
+      "Fill PMJDY account opening form.",
+      "Submit KYC documents and complete biometrics if required."
+    ]
+  }
+]
+
