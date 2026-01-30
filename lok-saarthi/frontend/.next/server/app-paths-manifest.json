@@ -1,0 +1,7 @@
+{
+  "/upload/page": "app/upload/page.js",
+  "/yojana/page": "app/yojana/page.js",
+  "/page": "app/page.js",
+  "/learn/page": "app/learn/page.js",
+  "/form-helper/page": "app/form-helper/page.js"
+}
