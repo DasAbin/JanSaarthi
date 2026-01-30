@@ -1,0 +1,181 @@
+[
+  {
+    "id": "pm-kisan",
+    "name": "PM-KISAN Samman Nidhi",
+    "description": "Direct income support scheme providing financial assistance to eligible landholding farmer families across India.",
+    "eligibility_rules": [
+      "Must be a landholding farmer family",
+      "Excludes income tax payers",
+      "Excludes institutional landholders",
+      "Land must be in the applicant's name"
+    ],
+    "documents_required": ["Aadhaar Card", "Bank account passbook", "Land ownership documents/Khasra-Khatauni"],
+    "benefit": "₹6,000 per year in 3 equal instalments of ₹2,000 each",
+    "steps": ["Collect all required documents", "Visit nearest CSC or apply online at pmkisan.gov.in", "Submit Aadhaar-linked bank details", "Track application status online"],
+    "category": "Agriculture"
+  },
+  {
+    "id": "pm-ujjwala",
+    "name": "Pradhan Mantri Ujjwala Yojana (PMUY)",
+    "description": "Scheme to provide free LPG connections to women from Below Poverty Line (BPL) households.",
+    "eligibility_rules": [
+      "Adult woman from the household",
+      "Household should be from BPL/eligible category",
+      "No existing LPG connection in the household",
+      "SECC-2011 data or eligible category"
+    ],
+    "documents_required": ["Aadhaar Card", "Ration card or address proof", "Bank account passbook", "Passport size photo"],
+    "benefit": "Free LPG connection, stove support, and first refill as per norms",
+    "steps": ["Visit nearest LPG distributor", "Fill application form with KYC", "Submit documents", "Receive connection within 7-10 days"],
+    "category": "Welfare"
+  },
+  {
+    "id": "pm-jdy",
+    "name": "Pradhan Mantri Jan Dhan Yojana (PMJDY)",
+    "description": "Financial inclusion program to ensure access to financial services like banking, insurance, and pension.",
+    "eligibility_rules": [
+      "Any Indian citizen can open account",
+      "No minimum balance required",
+      "Basic KYC documents needed"
+    ],
+    "documents_required": ["Aadhaar Card or any valid ID", "Address proof", "Passport size photograph"],
+    "benefit": "Zero balance bank account, RuPay debit card, ₹2 lakh accident insurance, ₹30,000 life cover, overdraft facility up to ₹10,000",
+    "steps": ["Visit any bank branch or banking correspondent", "Fill account opening form", "Submit KYC documents", "Receive RuPay card and passbook"],
+    "category": "Financial Inclusion"
+  },
+  {
+    "id": "ayushman-bharat",
+    "name": "Ayushman Bharat PM-JAY",
+    "description": "World's largest health insurance scheme providing coverage for secondary and tertiary hospitalization.",
+    "eligibility_rules": [
+      "Families identified based on SECC 2011 data",
+      "No family size or age limit",
+      "Pre-existing diseases covered from day one",
+      "State-specific criteria may apply"
+    ],
+    "documents_required": ["Aadhaar Card", "Ration card (if applicable)", "PM-JAY beneficiary card", "Family ID"],
+    "benefit": "Health coverage up to ₹5 lakh per family per year for hospitalization",
+    "steps": ["Check eligibility at mera.pmjay.gov.in", "Visit Ayushman Mitra at empanelled hospital", "Get PM-JAY card generated", "Avail cashless treatment"],
+    "category": "Health"
+  },
+  {
+    "id": "pmay-g",
+    "name": "Pradhan Mantri Awas Yojana - Gramin (PMAY-G)",
+    "description": "Housing scheme to provide pucca houses with basic amenities to eligible rural households.",
+    "eligibility_rules": [
+      "Rural households without pucca house",
+      "Listed in SECC 2011 as houseless/kutcha house",
+      "Priority to SC/ST, minorities, BPL families",
+      "Not benefited from any housing scheme earlier"
+    ],
+    "documents_required": ["Aadhaar Card", "Bank account details", "MGNREGA Job Card (if available)", "Land documents"],
+    "benefit": "₹1.20 lakh in plains and ₹1.30 lakh in hilly areas for house construction",
+    "steps": ["Verify inclusion in PMAY-G list at Gram Panchayat", "Complete verification process", "Receive funds in instalments linked to construction progress", "Complete construction within timeline"],
+    "category": "Housing"
+  },
+  {
+    "id": "mnrega",
+    "name": "MGNREGA (Mahatma Gandhi National Rural Employment Guarantee Act)",
+    "description": "Legal guarantee for 100 days of wage employment per year to rural households willing to do unskilled manual work.",
+    "eligibility_rules": [
+      "Adult member of rural household",
+      "Willing to do unskilled manual work",
+      "Must have Job Card",
+      "Work demanded within 15 days or unemployment allowance"
+    ],
+    "documents_required": ["Job Card", "Aadhaar Card", "Bank/Post office account details", "Photograph"],
+    "benefit": "100 days guaranteed wage employment per household per year at minimum wage rates",
+    "steps": ["Apply for Job Card at Gram Panchayat", "Demand work in writing", "Get work within 15 days of demand", "Receive wages within 15 days of work"],
+    "category": "Employment"
+  },
+  {
+    "id": "nsap-old-age",
+    "name": "Indira Gandhi National Old Age Pension Scheme (IGNOAPS)",
+    "description": "Monthly pension for elderly citizens from BPL families under National Social Assistance Programme.",
+    "eligibility_rules": [
+      "Age 60 years or above",
+      "Belonging to BPL family",
+      "Not receiving pension from other sources",
+      "State-specific criteria may apply"
+    ],
+    "documents_required": ["Age proof (Aadhaar/Birth certificate)", "BPL card or income certificate", "Bank account details", "Photograph"],
+    "benefit": "₹200-500 per month (central share) + state contribution",
+    "steps": ["Apply at Block/Tehsil office or online portal", "Submit required documents", "Verification by officials", "Pension credited to bank account"],
+    "category": "Social Security"
+  },
+  {
+    "id": "pm-fasal-bima",
+    "name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+    "description": "Comprehensive crop insurance scheme to protect farmers against crop loss due to natural calamities.",
+    "eligibility_rules": [
+      "All farmers growing notified crops",
+      "Both loanee and non-loanee farmers eligible",
+      "Sharecroppers and tenant farmers eligible",
+      "Enrolment during crop season window"
+    ],
+    "documents_required": ["Aadhaar Card", "Land records/Lease agreement", "Bank account details", "Sowing certificate"],
+    "benefit": "Insurance coverage for crop loss with premium of only 2% for Kharif, 1.5% for Rabi crops",
+    "steps": ["Enroll via bank/CSC/PMFBY portal during season", "Pay nominal premium", "Report crop loss to insurance company", "Receive claim after assessment"],
+    "category": "Agriculture"
+  },
+  {
+    "id": "ssy",
+    "name": "Sukanya Samriddhi Yojana (SSY)",
+    "description": "Small savings scheme for girl child to build fund for education and marriage expenses.",
+    "eligibility_rules": [
+      "Girl child below 10 years of age",
+      "Only 2 accounts per family (exceptions for twins/triplets)",
+      "Account opened by natural/legal guardian",
+      "Indian resident"
+    ],
+    "documents_required": ["Girl child's birth certificate", "Guardian's ID proof", "Guardian's address proof", "Photograph"],
+    "benefit": "High interest rate (currently ~8%), tax benefits under Section 80C, tax-free maturity",
+    "steps": ["Visit post office or authorized bank", "Fill SSY account opening form", "Make initial deposit (min ₹250)", "Deposit regularly for 15 years"],
+    "category": "Savings"
+  },
+  {
+    "id": "pm-svanidhi",
+    "name": "PM SVANidhi (Street Vendor's AtmaNirbhar Nidhi)",
+    "description": "Micro-credit scheme for street vendors to restart business affected by COVID-19 lockdowns.",
+    "eligibility_rules": [
+      "Street vendor with vending certificate or ID",
+      "Identified in survey conducted by ULB",
+      "Working in urban areas",
+      "Vendors who started before March 24, 2020"
+    ],
+    "documents_required": ["Vending certificate/ID card", "Aadhaar Card", "Bank account details", "Mobile number"],
+    "benefit": "Working capital loan up to ₹10,000-50,000 without collateral, interest subsidy of 7%",
+    "steps": ["Apply online at pmsvanidhi.mohua.gov.in", "Submit required documents", "Loan sanctioned by lending institution", "Digital payment incentive on repayment"],
+    "category": "Livelihood"
+  },
+  {
+    "id": "mudra",
+    "name": "Pradhan Mantri MUDRA Yojana",
+    "description": "Loans for micro and small enterprises to help them grow and create employment.",
+    "eligibility_rules": [
+      "Non-corporate, non-farm small/micro enterprises",
+      "Business should be income generating",
+      "No collateral required for loans up to ₹10 lakh",
+      "New or existing business"
+    ],
+    "documents_required": ["Aadhaar Card", "Business plan/proof", "Bank statements", "Address proof"],
+    "benefit": "Loans up to ₹10 lakh - Shishu (up to ₹50,000), Kishore (₹50,000-5 lakh), Tarun (₹5-10 lakh)",
+    "steps": ["Approach any bank/NBFC/MFI", "Submit business plan and documents", "Loan sanctioned based on viability", "No processing fee"],
+    "category": "Livelihood"
+  },
+  {
+    "id": "pmsby",
+    "name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+    "description": "Accident insurance scheme offering coverage for death or disability due to accident.",
+    "eligibility_rules": [
+      "Age between 18-70 years",
+      "Have a savings bank account",
+      "Auto-debit consent for premium",
+      "Aadhaar linked to bank account"
+    ],
+    "documents_required": ["Aadhaar Card", "Bank account with auto-debit", "Nominee details"],
+    "benefit": "₹2 lakh for accidental death, ₹2 lakh for total disability, ₹1 lakh for partial disability",
+    "steps": ["Visit bank or apply online", "Give auto-debit consent", "Premium of ₹20/year deducted annually", "Claim by nominee in case of accident"],
+    "category": "Insurance"
+  }
+]

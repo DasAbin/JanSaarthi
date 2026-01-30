@@ -8,7 +8,7 @@ export default function YojanaPage() {
   const [income, setIncome] = useState<string>("");
   const [state, setState] = useState<string>("");
   const [occupation, setOccupation] = useState<string>("");
-  const { mutate, data, isPending } = useYojanaMatch();
+  const { mutate, data, isPending, isError, error } = useYojanaMatch();
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,21 +70,28 @@ export default function YojanaPage() {
         </div>
       </form>
 
-      {data && (
+      {isError && (
+        <p className="text-sm text-red-600">
+          {error instanceof Error ? error.message : "Failed to check schemes"}
+        </p>
+      )}
+
+      {data?.results && (
         <section className="space-y-3">
-          {data.map((item: any) => (
+          {data.results.map((item: any) => (
             <article key={item.scheme.id} className="card p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <h2 className="text-base font-semibold">{item.scheme.name}</h2>
                 <span className="text-xs text-slate-500">
-                  Match: {(item.score * 100).toFixed(0)}%
+                  Match: {typeof item.score === "number" ? item.score : 0}%
                 </span>
               </div>
               <p className="text-sm text-slate-700">
                 {item.scheme.description}
               </p>
               <p className="text-sm text-slate-700">
-                <span className="font-semibold">Why:</span> {item.explanation}
+                <span className="font-semibold">Why:</span>{" "}
+                {Array.isArray(item.reasons) ? item.reasons.join(" ") : ""}
               </p>
               <p className="text-sm">
                 <span className="font-semibold">Benefit: </span>

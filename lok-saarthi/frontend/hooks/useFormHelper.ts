@@ -5,8 +5,8 @@ import { explainForm } from "../app/api/client";
 
 export function useFormHelper() {
   return useMutation({
-    mutationFn: async ({ image }: { image: File }) => {
-      const res = await explainForm(image);
+    mutationFn: async ({ image, language = "en" }: { image: File; language?: string }) => {
+      const res = await explainForm(image, language);
       return res.data;
     }
   });

@@ -1,0 +1,29 @@
+{
+  "title": "Digital Safety Basics",
+  "description": "Learn to stay safe from online fraud, fake links, and OTP scams.",
+  "lessons": [
+    {
+      "title": "OTP and Password Safety",
+      "content": "Never share OTP, PIN, or password with anyone. Banks and government officers never ask for your OTP. If someone asks, it is likely fraud.",
+      "quiz": [
+        {
+          "question": "Who should you share your OTP with?",
+          "options": ["Only bank staff", "Only family", "No one"],
+          "answerIndex": 2
+        }
+      ]
+    },
+    {
+      "title": "Recognize Fake Links",
+      "content": "Do not click unknown links from SMS/WhatsApp. Check the official website carefully. If unsure, ask a trusted person or visit the official office.",
+      "quiz": [
+        {
+          "question": "What is a safe action when you receive a suspicious link?",
+          "options": ["Click quickly", "Ignore and verify from official source", "Forward to many people"],
+          "answerIndex": 1
+        }
+      ]
+    }
+  ]
+}
+

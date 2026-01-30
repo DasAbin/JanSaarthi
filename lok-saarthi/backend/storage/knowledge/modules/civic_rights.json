@@ -1,0 +1,29 @@
+{
+  "title": "Civic Rights & Public Services",
+  "description": "Know basic rights, documents, and how to access public services.",
+  "lessons": [
+    {
+      "title": "Important Documents",
+      "content": "Common documents include Aadhaar, ration card, voter ID, and bank account. Keep photocopies and store originals safely.",
+      "quiz": [
+        {
+          "question": "Which is a common ID document in India?",
+          "options": ["Aadhaar", "Cinema ticket", "Toy card"],
+          "answerIndex": 0
+        }
+      ]
+    },
+    {
+      "title": "Getting Help",
+      "content": "If you face issues, use official helplines, CSC centers, or local offices. Avoid agents who ask for OTPs or large fees.",
+      "quiz": [
+        {
+          "question": "Who is safer to approach for government service help?",
+          "options": ["Unknown agent asking OTP", "Official CSC/helpline", "Random caller"],
+          "answerIndex": 1
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,29 @@
+{
+  "title": "Financial Basics",
+  "description": "Simple lessons on saving, bank accounts, and receiving benefits safely.",
+  "lessons": [
+    {
+      "title": "Why Saving Helps",
+      "content": "Saving even small amounts regularly helps during emergencies like illness, crop loss, or school fees. Keeping money in a bank is safer than cash at home.",
+      "quiz": [
+        {
+          "question": "Where is it safer to keep savings?",
+          "options": ["In a bank", "Under the bed", "With strangers"],
+          "answerIndex": 0
+        }
+      ]
+    },
+    {
+      "title": "Bank Account and DBT",
+      "content": "Government benefits often come through Direct Benefit Transfer (DBT) to your bank account. Keep your Aadhaar and bank details updated.",
+      "quiz": [
+        {
+          "question": "DBT means benefits come to:",
+          "options": ["A shop", "Your bank account", "Only cash"],
+          "answerIndex": 1
+        }
+      ]
+    }
+  ]
+}
+

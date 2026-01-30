@@ -3,11 +3,28 @@
 import { useState } from "react";
 import { useSimplifyDocument } from "../../hooks/useSimplifyDocument";
 import { VoiceBar } from "../../components/VoiceBar";
+import { VOICE_LANGUAGES } from "../../hooks/useVoice";
+
+function getLocalLanguage(): string {
+  if (typeof navigator === "undefined") return "en";
+  const lang = navigator.language || (navigator as any).userLanguage || "";
+  if (lang.startsWith("hi")) return "hi";
+  if (lang.startsWith("mr")) return "mr";
+  if (lang.startsWith("ta")) return "ta";
+  if (lang.startsWith("te")) return "te";
+  if (lang.startsWith("bn")) return "bn";
+  if (lang.startsWith("gu")) return "gu";
+  if (lang.startsWith("kn")) return "kn";
+  if (lang.startsWith("ml")) return "ml";
+  if (lang.startsWith("pa")) return "pa";
+  if (lang.startsWith("or")) return "or";
+  return "en";
+}
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
-  const [language, setLanguage] = useState("en");
-  const { mutate, data, isPending } = useSimplifyDocument();
+  const [language, setLanguage] = useState(() => (typeof navigator !== "undefined" ? getLocalLanguage() : "en"));
+  const { mutate, data, isPending, isError, error } = useSimplifyDocument();
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +37,11 @@ export default function UploadPage() {
     [data.summary, "", data.eli10, "", ...(data.keyPoints || [])].join("\n");
 
   return (
-    <main className="space-y-4">
+    <main className="space-y-4" role="main" aria-label="Document Simplifier">
       <h1 className="text-xl font-semibold">Document Simplifier</h1>
+      <p className="text-sm text-slate-600">
+        Upload a PDF or image for a simple summary. Supports Indian languages; long documents are summarized in one shot for speed.
+      </p>
       <form
         onSubmit={onSubmit}
         className="card p-4 space-y-3 flex flex-col sm:flex-row sm:items-end gap-3"
@@ -34,30 +54,42 @@ export default function UploadPage() {
               onChange={(e) => setFile(e.target.files?.[0] || null)}
               className="mt-1 block w-full text-sm"
               accept=".pdf,image/*"
+              aria-describedby="upload-hint"
             />
           </label>
-          <label className="text-sm font-medium">
-            Language
+          <p id="upload-hint" className="text-xs text-slate-500 sr-only">
+            PDF or image files
+          </p>
+          <label className="text-sm font-medium block">
+            Document language
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
               className="input mt-1"
+              aria-label="Document language"
             >
-              <option value="en">English</option>
-              <option value="hi">Hindi</option>
+              {VOICE_LANGUAGES.map(({ code, name }) => (
+                <option key={code} value={code}>{name}</option>
+              ))}
             </select>
           </label>
         </div>
-        <button className="btn-primary w-full sm:w-auto" disabled={isPending}>
+        <button className="btn-primary w-full sm:w-auto" disabled={isPending} aria-busy={isPending}>
           {isPending ? "Processing…" : "Simplify"}
         </button>
       </form>
 
+      {isError && (
+        <p className="text-sm text-red-600" role="alert">
+          {error instanceof Error ? error.message : "Failed to simplify document. Check your connection and try again."}
+        </p>
+      )}
+
       {data && (
-        <section className="card p-4 space-y-3">
+        <section className="card p-4 space-y-3" aria-label="Summary">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-lg font-semibold">Summary</h2>
-            <VoiceBar textToSpeak={fullText || ""} />
+            <VoiceBar textToSpeak={fullText || ""} defaultLang={language} />
           </div>
           <p className="text-sm whitespace-pre-wrap">{data.summary}</p>
 
