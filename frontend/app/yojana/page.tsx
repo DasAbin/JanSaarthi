@@ -21,7 +21,7 @@ export default function YojanaPage() {
   };
 
   return (
-    <main className="space-y-4">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
       <h1 className="text-xl font-semibold">YojanaMatch</h1>
       <form
         onSubmit={onSubmit}
@@ -101,7 +101,7 @@ export default function YojanaPage() {
           ))}
         </section>
       )}
-    </main>
+    </div>
   );
 }
 

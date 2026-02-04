@@ -50,7 +50,7 @@ export default function LearnPage() {
   };
 
   return (
-    <main className="space-y-4" role="main" aria-label="Learn and Grow">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4" role="main" aria-label="Learn and Grow">
       <h1 className="text-xl font-semibold">Learn &amp; Grow</h1>
       <p className="text-sm text-slate-600">
         Short lessons on money, rights, and digital safety. Listen in your language.
@@ -68,11 +68,10 @@ export default function LearnPage() {
           <button
             key={m.id}
             onClick={() => onChange(m.id)}
-            className={`px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap ${
-              selected === m.id
-                ? "bg-primary text-white"
-                : "bg-slate-100 text-slate-800"
-            }`}
+            className={`px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap ${selected === m.id
+              ? "bg-primary text-white"
+              : "bg-slate-100 text-slate-800"
+              }`}
           >
             {m.title}
           </button>
@@ -126,7 +125,7 @@ export default function LearnPage() {
           </>
         )}
       </section>
-    </main>
+    </div>
   );
 }
 
