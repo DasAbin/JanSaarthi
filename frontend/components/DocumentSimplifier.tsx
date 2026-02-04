@@ -97,7 +97,11 @@ export default function DocumentSimplifier() {
             {isError && (
                 <div className="rounded-md bg-red-50 p-4">
                     <p className="text-sm text-red-700" role="alert">
-                        {error instanceof Error ? error.message : "Failed to simplify document. Check your connection and try again."}
+                        {error instanceof Error ? (
+                            (error as any).response?.data?.error || error.message
+                        ) : (
+                            "Failed to simplify document. Check your connection and try again."
+                        )}
                     </p>
                 </div>
             )}
