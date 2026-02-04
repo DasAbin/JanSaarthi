@@ -37,7 +37,7 @@ export default function UploadPage() {
     [data.summary, "", data.eli10, "", ...(data.keyPoints || [])].join("\n");
 
   return (
-    <main className="space-y-4" role="main" aria-label="Document Simplifier">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4" role="main" aria-label="Document Simplifier">
       <h1 className="text-xl font-semibold">Document Simplifier</h1>
       <p className="text-sm text-slate-600">
         Upload a PDF or image for a simple summary. Supports Indian languages; long documents are summarized in one shot for speed.
@@ -111,7 +111,7 @@ export default function UploadPage() {
           </ol>
         </section>
       )}
-    </main>
+    </div>
   );
 }
 

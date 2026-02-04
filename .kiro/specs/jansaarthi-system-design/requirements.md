@@ -4,11 +4,47 @@
 
 JanSaarthi is a citizen services platform that democratizes access to government schemes and services through AI-powered voice interaction, document processing, and intelligent assistance. The system enables citizens to discover relevant government programs, understand eligibility criteria, and receive personalized guidance through natural language conversations and document analysis.
 
+**Current Issues to Address:**
+- Project name inconsistency (currently "LokSaarthi" in code, should be "JanSaarthi")
+- Landing page lacks integrated functionality - all features should be accessible directly from the home page
+- Backend functionalities are not properly connected to the frontend
+- Missing proper integration between existing services and UI components
+
 ## User Stories
 
-### Epic 1: Voice-First Citizen Interface
+### Epic 1: Integrated Landing Page with All Functionalities
 
-#### 1.1 Voice Query Processing
+#### 1.1 Unified Dashboard Interface
+**As a** citizen visiting JanSaarthi  
+**I want to** access all features directly from the landing page without navigation  
+**So that** I can quickly use any service without learning complex navigation
+
+**Acceptance Criteria:**
+- Landing page displays all major features as interactive cards/sections
+- Document upload and OCR functionality embedded in the main page
+- Voice input button prominently displayed and functional
+- Scheme eligibility checker accessible without page navigation
+- Form helper integrated into the main interface
+- Learning modules accessible from the landing page
+- All features work without requiring separate page loads
+
+#### 1.2 Real-time Feature Integration
+**As a** citizen using JanSaarthi  
+**I want** all features to work seamlessly on the same page  
+**So that** I don't lose context when switching between different services
+
+**Acceptance Criteria:**
+- Document upload shows processing status in real-time
+- OCR results display immediately on the same page
+- Voice input works across all features
+- Scheme matching results appear inline
+- Form analysis displays without page refresh
+- Error states are handled gracefully with user-friendly messages
+- Loading states provide clear feedback to users
+
+### Epic 2: Voice-First Citizen Interface
+
+#### 2.1 Voice Query Processing
 **As a** citizen with limited literacy  
 **I want to** ask questions about government schemes using my voice  
 **So that** I can access information without needing to read or type
@@ -20,7 +56,7 @@ JanSaarthi is a citizen services platform that democratizes access to government
 - Voice interface works on both web and mobile platforms
 - Fallback to text-only interface when audio fails
 
-#### 1.2 Conversational Assistance
+#### 2.2 Conversational Assistance
 **As a** citizen seeking government services  
 **I want to** have natural conversations about my eligibility and requirements  
 **So that** I can understand complex schemes in simple terms
@@ -32,9 +68,9 @@ JanSaarthi is a citizen services platform that democratizes access to government
 - Conversation history is preserved within a session
 - System provides confidence scores for its responses
 
-### Epic 2: Document Processing and OCR
+### Epic 3: Document Processing and OCR
 
-#### 2.1 Document Upload and Processing
+#### 3.1 Document Upload and Processing
 **As a** citizen with physical documents  
 **I want to** upload photos or scans of my documents  
 **So that** the system can extract information and determine my eligibility
@@ -46,7 +82,7 @@ JanSaarthi is a citizen services platform that democratizes access to government
 - System handles skewed, noisy, or low-quality images
 - Processing status is shown with estimated completion time
 
-#### 2.2 Intelligent Document Analysis
+#### 3.2 Intelligent Document Analysis
 **As a** citizen with various government documents  
 **I want the** system to automatically identify document types and extract key information  
 **So that** I don't need to manually enter all my details
@@ -58,9 +94,9 @@ JanSaarthi is a citizen services platform that democratizes access to government
 - System maintains document privacy and security
 - Extracted data is used for eligibility matching
 
-### Epic 3: Scheme Discovery and Matching
+### Epic 4: Scheme Discovery and Matching
 
-#### 3.1 Personalized Scheme Recommendations
+#### 4.1 Personalized Scheme Recommendations
 **As a** citizen looking for government assistance  
 **I want to** receive personalized recommendations based on my profile  
 **So that** I can discover relevant schemes I might not know about
@@ -72,7 +108,7 @@ JanSaarthi is a citizen services platform that democratizes access to government
 - User can filter recommendations by category, location, or benefit type
 - System updates recommendations as user profile changes
 
-#### 3.2 Scheme Information and Guidance
+#### 4.2 Scheme Information and Guidance
 **As a** citizen interested in a government scheme  
 **I want to** understand the benefits, requirements, and application process  
 **So that** I can make informed decisions about applying
@@ -84,9 +120,9 @@ JanSaarthi is a citizen services platform that democratizes access to government
 - Contact information and deadlines are clearly displayed
 - System estimates processing time and potential benefits
 
-### Epic 4: Form Assistance and Application Support
+### Epic 5: Form Assistance and Application Support
 
-#### 4.1 Voice-Guided Form Filling
+#### 5.1 Voice-Guided Form Filling
 **As a** citizen applying for government schemes  
 **I want** voice assistance while filling out application forms  
 **So that** I can complete applications even with limited literacy
@@ -98,7 +134,7 @@ JanSaarthi is a citizen services platform that democratizes access to government
 - Progress is saved automatically and can be resumed
 - Completed forms can be downloaded or submitted directly
 
-#### 4.2 Document Requirement Assistance
+#### 5.2 Document Requirement Assistance
 **As a** citizen preparing to apply for schemes  
 **I want to** understand exactly what documents I need  
 **So that** I can gather everything before starting the application
@@ -110,9 +146,9 @@ JanSaarthi is a citizen services platform that democratizes access to government
 - Alternative document options are suggested when available
 - Document checklist can be saved and printed
 
-### Epic 5: Learning and Education
+### Epic 6: Learning and Education
 
-#### 5.1 Civic Education Modules
+#### 6.1 Civic Education Modules
 **As a** citizen wanting to understand my rights and government services  
 **I want** access to educational content about civic topics  
 **So that** I can become more informed about available services
@@ -124,7 +160,7 @@ JanSaarthi is a citizen services platform that democratizes access to government
 - Progress tracking shows completed modules
 - Content is regularly updated with current information
 
-#### 5.2 Scheme Comparison and Analysis
+#### 6.2 Scheme Comparison and Analysis
 **As a** citizen evaluating multiple government schemes  
 **I want to** compare different options side by side  
 **So that** I can choose the best schemes for my situation
@@ -136,9 +172,9 @@ JanSaarthi is a citizen services platform that democratizes access to government
 - Eligibility status is shown for each scheme
 - Comparison results can be saved or shared
 
-### Epic 6: Administrative and Analytics
+### Epic 7: Administrative and Analytics
 
-#### 6.1 System Administration
+#### 7.1 System Administration
 **As a** system administrator  
 **I want** comprehensive tools to manage the platform  
 **So that** I can ensure optimal performance and user experience
@@ -150,7 +186,7 @@ JanSaarthi is a citizen services platform that democratizes access to government
 - System configuration can be modified without downtime
 - Audit logs track all administrative actions
 
-#### 6.2 Performance Monitoring
+#### 7.2 Performance Monitoring
 **As a** system administrator  
 **I want** real-time monitoring and alerting  
 **So that** I can quickly identify and resolve issues
@@ -164,19 +200,33 @@ JanSaarthi is a citizen services platform that democratizes access to government
 
 ## Functional Requirements
 
-### FR1: Multi-modal Input Processing
+### FR1: Integrated Landing Page Functionality
+- All major features must be accessible and functional from the main landing page
+- Document upload, OCR, voice input, scheme matching, and form analysis must work inline
+- No separate page navigation required for core functionalities
+- Real-time updates and status indicators for all operations
+- Consistent branding with "JanSaarthi" name throughout the application
+
+### FR2: Backend-Frontend Integration
+- All existing backend APIs must be properly connected to frontend components
+- Error handling must provide user-friendly messages
+- Loading states must be implemented for all async operations
+- API responses must be properly formatted and displayed
+- Voice functionality must work end-to-end from frontend to backend
+
+### FR3: Multi-modal Input Processing
 - System must support voice, text, and document inputs
 - Voice processing must handle background noise and accents
 - Document processing must work with various image qualities
 - Input validation must prevent malicious content
 
-### FR2: Intelligent Information Retrieval
+### FR4: Intelligent Information Retrieval
 - RAG pipeline must retrieve relevant information with >90% accuracy
 - Vector search must complete within 100ms for typical queries
 - System must provide source citations for all responses
 - Content must be kept up-to-date with latest government information
 
-### FR3: Multilingual Support
+### FR5: Multilingual Support
 - System must support English, Hindi, and 10 regional Indian languages
 - Language detection must be automatic with >95% accuracy
 - Translation quality must maintain meaning and context
