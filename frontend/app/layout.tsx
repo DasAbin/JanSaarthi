@@ -2,7 +2,6 @@ import "./globals.css";
 import type { ReactNode } from "react";
 import { QueryProvider } from "../lib/query-provider";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 
 export const metadata = {
   title: "JanSaarthi",
@@ -19,7 +18,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <main className="flex-1">
             {children}
           </main>
-          <Footer />
         </QueryProvider>
       </body>
     </html>

@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import {
   Mic,
   Search,
@@ -11,9 +12,6 @@ import {
   ArrowRight
 } from 'lucide-react';
 import FeatureCard from '../components/FeatureCard';
-import YojanaFinder from '../components/YojanaFinder';
-import DocumentSimplifier from '../components/DocumentSimplifier';
-import LearnModules from '../components/LearnModules';
 
 const App = () => {
   return (
@@ -40,22 +38,22 @@ const App = () => {
 
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
                 {/* Primary CTA: High contrast and accessible */}
-                <button
-                  onClick={() => document.getElementById('schemes')?.scrollIntoView({ behavior: 'smooth' })}
+                <Link
+                  href="/yojana"
                   className="flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-indigo-200 transition-all hover:bg-indigo-700 hover:shadow-indigo-300 active:scale-95 sm:w-auto"
                 >
                   <Search size={24} />
                   Find Schemes
-                </button>
+                </Link>
 
                 {/* Secondary CTA: Clean outline style */}
-                <button
-                  onClick={() => document.getElementById('simplify')?.scrollIntoView({ behavior: 'smooth' })}
+                <Link
+                  href="/simplify"
                   className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-white px-8 py-4 text-lg font-bold text-slate-700 transition-all hover:bg-slate-50 active:scale-95 sm:w-auto"
                 >
                   Simplify Docs
                   <ArrowRight size={20} />
-                </button>
+                </Link>
               </div>
 
               <div className="mt-8 flex items-center justify-center gap-6 grayscale opacity-60 lg:justify-start">
@@ -125,49 +123,30 @@ const App = () => {
               title="Voice Navigation"
               description="Skip the menus. Just speak in your native tongue to find what you need instantly."
               color="bg-indigo-50"
+              href="#"
             />
             <FeatureCard
               icon={<Search className="text-blue-600" />}
               title="Scheme Discovery"
               description="Automated eligibility checks for state and central government welfare programs."
               color="bg-blue-50"
+              href="/yojana"
             />
             <FeatureCard
               icon={<MessageSquare className="text-emerald-600" />}
               title="Direct Support"
               description="Connect directly with grievance redressal cells without visiting an office."
               color="bg-emerald-50"
+              href="#"
             />
             <FeatureCard
               icon={<FileText className="text-amber-600" />}
               title="Simplified Docs"
               description="AI summaries of complex government notifications in plain, simple language."
               color="bg-amber-50"
+              href="/simplify"
             />
           </div>
-        </div>
-      </section>
-
-      {/* Interactive Sections */}
-
-      {/* Schemes Section */}
-      <section id="schemes" className="py-24 bg-slate-50 scroll-mt-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <YojanaFinder />
-        </div>
-      </section>
-
-      {/* Simplify Section */}
-      <section id="simplify" className="py-24 bg-white scroll-mt-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <DocumentSimplifier />
-        </div>
-      </section>
-
-      {/* Learn Section */}
-      <section id="learn" className="py-24 bg-indigo-50 scroll-mt-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LearnModules />
         </div>
       </section>
 

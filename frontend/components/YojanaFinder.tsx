@@ -84,7 +84,11 @@ export default function YojanaFinder() {
             {isError && (
                 <div className="rounded-md bg-red-50 p-4">
                     <p className="text-sm text-red-700">
-                        {error instanceof Error ? error.message : "Failed to check schemes"}
+                        {error instanceof Error ? (
+                            (error as any).response?.data?.error || error.message
+                        ) : (
+                            "Failed to check schemes"
+                        )}
                     </p>
                 </div>
             )}
