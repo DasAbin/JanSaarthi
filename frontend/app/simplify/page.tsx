@@ -12,12 +12,12 @@ export default function SimplifyRedirectPage() {
   }, [router]);
 
   return (
-    <main className="space-y-4">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
       <h1 className="text-xl font-semibold">Document Simplifier</h1>
       <p className="text-sm text-slate-700">
         Redirecting to the main simplifier page…
       </p>
-    </main>
+    </div>
   );
 }
 

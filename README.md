@@ -1,6 +1,6 @@
-## LokSaarthi – AI-powered Civic Access Platform
+## JanSaarthi – AI-powered Civic Access Platform
 
-This repository contains the full-stack implementation of **LokSaarthi**, a voice-first, low-bandwidth platform that simplifies government documents, explains forms, identifies scheme eligibility, and teaches essential skills in local languages.
+This repository contains the full-stack implementation of **JanSaarthi**, a voice-first, low-bandwidth platform that simplifies government documents, explains forms, identifies scheme eligibility, and teaches essential skills in local languages.
 
 ### 🚀 Quick Start
 
@@ -32,7 +32,7 @@ Citizens, especially in rural and low-connectivity regions, struggle to:
 
 ### Solution Summary
 
-LokSaarthi provides:
+JanSaarthi provides:
 - **Document Simplifier** for PDFs/images using OCR + LLM summarization.
 - **Scheme Eligibility Matcher (YojanaMatch)** that maps user profiles to relevant schemes.
 - **AI Form Helper** to explain each field of a form and how to fill it.
@@ -108,7 +108,7 @@ LokSaarthi provides:
 ### Folder Structure
 
 ```text
-lok-saarthi/
+jan-saarthi/
   frontend/
     app/
       page.tsx
