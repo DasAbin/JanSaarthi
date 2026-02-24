@@ -143,3 +143,12 @@ vite.config.ts.timestamp-*
 **/node_modules/
 **/.next/
 **/dist/
+
+# Python virtual environments
+**/venv/
+**/.venv/
+
+# Local tools and large data
+.kiro/
+backend/storage/models/
+backend/storage/pdfs/

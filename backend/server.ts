@@ -13,6 +13,7 @@ import { yojanaRouter } from "./routes/yojana";
 import { formHelperRouter } from "./routes/formHelper";
 import { voiceRouter } from "./routes/voice";
 import { learnRouter } from "./routes/learn";
+import { askRouter } from "./routes/ask";
 
 async function main() {
   await ensureStorageDirs();
@@ -36,6 +37,7 @@ async function main() {
   app.use("/api/form-helper", formHelperRouter);
   app.use("/api/voice", voiceRouter);
   app.use("/api/learn", learnRouter);
+  app.use("/api/ask", askRouter);
 
   const server = await new Promise<ReturnType<express.Express["listen"]>>((resolve, reject) => {
     const s = app.listen(PORT, () => {

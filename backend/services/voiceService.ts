@@ -1,11 +1,9 @@
 import fs from "fs/promises";
 import path from "path";
-import os from "os";
 import { spawn } from "child_process";
-import { storagePath } from "../utils/storage";
 import { askLLM } from "./llm";
 
-/** Indian language codes supported for TTS (Piper/Google/browser). */
+/** Indian language codes supported for TTS (Indic-Parler-TTS). */
 export const TTS_LANGUAGES = [
   { code: "en", name: "English" },
   { code: "hi", name: "हिंदी (Hindi)" },
@@ -29,7 +27,7 @@ export type SttResponse = {
   text: string;
   confidence: number;
   language: string;
-  engine: "gemini" | "vosk" | "fallback";
+  engine: "silero" | "gemini" | "fallback";
 };
 
 export type TtsRequest = {
@@ -41,12 +39,23 @@ export type TtsResponse = {
   audioBase64: string;
   format: string;
   language: string;
-  engine: "piper" | "google" | "browser" | "fallback";
+  engine: "parler" | "browser" | "fallback";
 };
 
 export class VoiceService {
   /**
-   * Speech-to-Text: Vosk (offline, Hindi + regional) first, then Gemini.
+   * Get Python executable path, resolving relative paths from backend/ directory.
+   */
+  private getPythonPath(): string {
+    const raw = process.env.PYTHON || "python";
+    // Use as-is if it's just "python" (system PATH) or already absolute
+    if (raw === "python" || path.isAbsolute(raw)) return raw;
+    // Resolve relative path from current working directory (backend/)
+    return path.resolve(process.cwd(), raw);
+  }
+
+  /**
+   * Speech-to-Text: Silero STT (local, free) first, then Gemini fallback.
    */
   async speechToText(req: SttRequest): Promise<SttResponse> {
     const { audioPath, language } = req;
@@ -62,15 +71,19 @@ export class VoiceService {
       };
     }
 
-    // 1) Try Vosk (offline STT) if VOSK_MODEL or VOSK_MODEL_DIR is set
-    const voskText = await this.transcribeWithVosk(audioPath);
-    if (voskText !== null && voskText.trim().length > 0) {
-      return {
-        text: voskText.trim(),
-        confidence: 0.9,
-        language,
-        engine: "vosk"
-      };
+    // 1) Try Silero STT (local, free, multilingual)
+    try {
+      const sileroText = await this.transcribeWithSilero(audioPath);
+      if (sileroText !== null && sileroText.trim().length > 0) {
+        return {
+          text: sileroText.trim(),
+          confidence: 0.9,
+          language,
+          engine: "silero"
+        };
+      }
+    } catch (error) {
+      console.error("[VoiceService] Silero STT error:", error);
     }
 
     // 2) Gemini-based transcription (fallback)
@@ -105,50 +118,49 @@ export class VoiceService {
     }
   }
 
-  /** Vosk STT via Python script. Returns null if Vosk not configured or fails. */
-  private async transcribeWithVosk(audioPath: string): Promise<string | null> {
-    const modelPath = process.env.VOSK_MODEL || process.env.VOSK_MODEL_DIR;
-    if (!modelPath) return null;
-    const pathModule = await import("path");
-    const script = pathModule.join(process.cwd(), "python", "vosk_stt.py");
+  /** Silero STT via Python script. Returns null if fails. */
+  private async transcribeWithSilero(audioPath: string): Promise<string | null> {
+    const scriptPath = path.join(process.cwd(), "python", "stt_silero.py");
     try {
-      await fs.access(script);
+      await fs.access(scriptPath);
     } catch {
+      console.warn("[VoiceService] Silero STT script not found:", scriptPath);
       return null;
     }
-    const { spawn } = await import("child_process");
-    const python = process.env.PYTHON || "python";
+
+    const python = this.getPythonPath();
     return new Promise((resolve) => {
-      const child = spawn(python, [script, "--input", audioPath], {
-        stdio: ["ignore", "pipe", "pipe"]
+      const child = spawn(python, [scriptPath, audioPath], {
+        stdio: ["ignore", "pipe", "pipe"],
+        cwd: path.join(process.cwd(), "python")
       });
       let stdout = "";
       let stderr = "";
       child.stdout.on("data", (d) => (stdout += d.toString()));
       child.stderr.on("data", (d) => (stderr += d.toString()));
-      child.on("error", () => resolve(null));
+      child.on("error", (err) => {
+        console.error("[VoiceService] Silero STT spawn error:", err);
+        resolve(null);
+      });
       child.on("exit", (code) => {
         if (code !== 0) {
+          console.error(`[VoiceService] Silero STT exited with code ${code}: ${stderr}`);
           resolve(null);
           return;
         }
-        try {
-          const json = JSON.parse(stdout) as { text?: string };
-          resolve(json.text || null);
-        } catch {
-          resolve(null);
-        }
+        const text = stdout.trim();
+        resolve(text || null);
       });
     });
   }
 
   /**
-   * Text-to-Speech: Piper (offline) first, then Google Cloud TTS, else browser fallback.
-   * Supports Indian languages: Marathi, Kannada, Tamil, Malayalam, Telugu, Bengali, Punjabi, Gujarati, Odia.
+   * Text-to-Speech: Indic-Parler-TTS (local, free) first, else browser fallback.
+   * Supports Indian languages: hi, bn, ta, te, kn, ml, mr, gu, or, pa.
    */
   async textToSpeech(req: TtsRequest): Promise<TtsResponse> {
     const { text, languageCode } = req;
-    const lang = (languageCode || "en-IN").replace(/-IN$/i, "").toLowerCase();
+    const lang = (languageCode || "hi-IN").replace(/-IN$/i, "").toLowerCase();
 
     if (!text || text.trim().length === 0) {
       return {
@@ -159,38 +171,22 @@ export class VoiceService {
       };
     }
 
-    // 1) Piper TTS (offline, no API key) — set PIPER_PATH and PIPER_MODEL_DIR or PIPER_MODEL_<LANG>
+    // 1) Indic-Parler-TTS (local, free, offline)
     try {
-      const piperBase64 = await this.synthesizeWithPiper(text, lang);
-      if (piperBase64) {
+      const parlerBase64 = await this.generateParlerTTS(text, lang);
+      if (parlerBase64) {
         return {
-          audioBase64: piperBase64,
+          audioBase64: parlerBase64,
           format: "audio/wav",
           language: languageCode,
-          engine: "piper"
+          engine: "parler"
         };
       }
     } catch (error) {
-      console.error("[VoiceService] Piper TTS error:", error);
+      console.error("[VoiceService] Indic-Parler-TTS error:", error);
     }
 
-    // 2) Google Cloud TTS (if configured)
-    const googleCredentials = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-    if (googleCredentials) {
-      try {
-        const audioBase64 = await this.synthesizeWithGoogleTts(text, languageCode);
-        return {
-          audioBase64,
-          format: "audio/mp3",
-          language: languageCode,
-          engine: "google"
-        };
-      } catch (error) {
-        console.error("[VoiceService] Google TTS error:", error);
-      }
-    }
-
-    // 3) Return empty — frontend uses browser TTS (offline fallback)
+    // 2) Return empty — frontend uses browser TTS (offline fallback)
     return {
       audioBase64: "",
       format: "audio/wav",
@@ -200,115 +196,43 @@ export class VoiceService {
   }
 
   /**
-   * Piper TTS: spawn piper binary. Set PIPER_PATH (binary) and PIPER_MODEL_DIR or PIPER_MODEL_<lang> (path to .onnx).
-   * Indian voices: place .onnx models in storage/voices/<lang>/ or set PIPER_MODEL_hi, PIPER_MODEL_ta, etc.
+   * Generate TTS using Indic-Parler-TTS Python script.
+   * Returns base64-encoded WAV audio or null on failure.
    */
-  private async synthesizeWithPiper(text: string, langCode: string): Promise<string | null> {
-    const piperPath = process.env.PIPER_PATH || "piper";
-    const modelDir = process.env.PIPER_MODEL_DIR || storagePath("voices");
-    const envKey = `PIPER_MODEL_${langCode.replace("-", "_").toUpperCase()}`;
-    const explicitModel = process.env[envKey];
-    let modelPath = explicitModel || path.join(modelDir, langCode, "model.onnx");
+  private async generateParlerTTS(text: string, langCode: string): Promise<string | null> {
+    const scriptPath = path.join(process.cwd(), "python", "indic_tts.py");
     try {
-      await fs.access(modelPath);
+      await fs.access(scriptPath);
     } catch {
-      // Try en as fallback for Piper
-      if (langCode !== "en") {
-        modelPath = process.env.PIPER_MODEL_EN || path.join(modelDir, "en", "model.onnx");
-        try {
-          await fs.access(modelPath);
-        } catch {
-          return null;
-        }
-      } else {
-        return null;
-      }
+      console.warn("[VoiceService] Indic-Parler-TTS script not found:", scriptPath);
+      return null;
     }
-    const outWav = path.join(process.env.TMPDIR || os.tmpdir(), `piper_${Date.now()}.wav`);
-    return new Promise((resolve, reject) => {
-      const child = spawn(piperPath, ["--model", modelPath, "--output_file", outWav], {
-        stdio: ["pipe", "pipe", "pipe"]
+
+    const python = this.getPythonPath();
+    return new Promise((resolve) => {
+      // Pass text as-is (spawn handles arguments correctly)
+      const child = spawn(python, [scriptPath, text, langCode], {
+        stdio: ["ignore", "pipe", "pipe"],
+        cwd: path.join(process.cwd(), "python")
       });
-      child.stdin.write(text, () => child.stdin.end());
+      let stdout = "";
       let stderr = "";
+      child.stdout.on("data", (d) => (stdout += d.toString()));
       child.stderr.on("data", (d) => (stderr += d.toString()));
-      child.on("error", (err) => reject(err));
-      child.on("exit", async (code) => {
-        try {
-          if (code === 0) {
-            const buf = await fs.readFile(outWav);
-            await fs.unlink(outWav).catch(() => {});
-            resolve(buf.toString("base64"));
-          } else {
-            reject(new Error(`Piper exited ${code}: ${stderr}`));
-          }
-        } catch (e) {
-          reject(e);
+      child.on("error", (err) => {
+        console.error("[VoiceService] Indic-Parler-TTS spawn error:", err);
+        resolve(null);
+      });
+      child.on("exit", (code) => {
+        if (code !== 0) {
+          console.error(`[VoiceService] Indic-Parler-TTS exited with code ${code}: ${stderr}`);
+          resolve(null);
+          return;
         }
+        const base64Audio = stdout.trim();
+        resolve(base64Audio || null);
       });
     });
-  }
-
-  private async synthesizeWithGoogleTts(text: string, languageCode: string): Promise<string> {
-    try {
-      // Dynamic import to avoid errors if package not installed
-      const textToSpeech = await import("@google-cloud/text-to-speech");
-      const client = new textToSpeech.TextToSpeechClient();
-
-      // Map language code to Google TTS voice
-      const voiceConfig = this.getVoiceConfig(languageCode);
-
-      const [response] = await client.synthesizeSpeech({
-        input: { text },
-        voice: voiceConfig,
-        audioConfig: { audioEncoding: "MP3" }
-      });
-
-      if (response.audioContent) {
-        return Buffer.from(response.audioContent).toString("base64");
-      }
-      return "";
-    } catch (error) {
-      console.error("[VoiceService] Google TTS synthesis error:", error);
-      throw error;
-    }
-  }
-
-  private getVoiceConfig(languageCode: string): { languageCode: string; name: string; ssmlGender: "FEMALE" | "MALE" } {
-    const lang = languageCode.toLowerCase();
-    
-    if (lang.startsWith("hi")) {
-      return { languageCode: "hi-IN", name: "hi-IN-Wavenet-A", ssmlGender: "FEMALE" };
-    }
-    if (lang.startsWith("mr")) {
-      return { languageCode: "mr-IN", name: "mr-IN-Wavenet-A", ssmlGender: "FEMALE" };
-    }
-    if (lang.startsWith("ta")) {
-      return { languageCode: "ta-IN", name: "ta-IN-Wavenet-A", ssmlGender: "FEMALE" };
-    }
-    if (lang.startsWith("te")) {
-      return { languageCode: "te-IN", name: "te-IN-Standard-A", ssmlGender: "FEMALE" };
-    }
-    if (lang.startsWith("bn")) {
-      return { languageCode: "bn-IN", name: "bn-IN-Wavenet-A", ssmlGender: "FEMALE" };
-    }
-    if (lang.startsWith("gu")) {
-      return { languageCode: "gu-IN", name: "gu-IN-Wavenet-A", ssmlGender: "FEMALE" };
-    }
-    if (lang.startsWith("kn")) {
-      return { languageCode: "kn-IN", name: "kn-IN-Wavenet-A", ssmlGender: "FEMALE" };
-    }
-    if (lang.startsWith("ml")) {
-      return { languageCode: "ml-IN", name: "ml-IN-Wavenet-A", ssmlGender: "FEMALE" };
-    }
-    if (lang.startsWith("pa")) {
-      return { languageCode: "pa-IN", name: "pa-IN-Wavenet-A", ssmlGender: "FEMALE" };
-    }
-    if (lang.startsWith("or")) {
-      return { languageCode: "or-IN", name: "or-IN-Wavenet-A", ssmlGender: "FEMALE" };
-    }
-    // Default: English India
-    return { languageCode: "en-IN", name: "en-IN-Wavenet-A", ssmlGender: "FEMALE" };
   }
 
   private getLanguageName(code: string): string {

@@ -89,6 +89,15 @@ function stripJsonMarkdown(text: string): string {
   return t;
 }
 
+function is429(err: unknown): boolean {
+  const e = err as { status?: number; message?: string };
+  return e?.status === 429 || (typeof e?.message === "string" && e.message.includes("429"));
+}
+
+function sleepMs(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /**
  * Single LLM entry point: Gemini (model discovered via ListModels) primary, OpenAI fallback when configured.
  * Uses your key's actual model list to avoid 404; only uses OpenAI if OPENAI_API_KEY is a real key.
@@ -128,38 +137,47 @@ export async function askLLM(prompt: string, options?: AskLLMOptions): Promise<s
     }
   }
 
-  // 1) Use Gemini with model ID from ListModels (or GEMINI_MODEL env)
+  // 1) Use Gemini with model ID from ListModels (or GEMINI_MODEL env); retry once on 429
   let lastErr: unknown;
-  try {
-    const modelId = await getWorkingGeminiModelId();
-    console.log("[LLM] Using Gemini", modelId);
-    const genAI = getGenAI();
-    const model = genAI.getGenerativeModel({ model: modelId });
+  const maxGeminiAttempts = 2;
+  for (let attempt = 1; attempt <= maxGeminiAttempts; attempt++) {
+    try {
+      const modelId = await getWorkingGeminiModelId();
+      if (attempt === 1) console.log("[LLM] Using Gemini", modelId);
+      const genAI = getGenAI();
+      const model = genAI.getGenerativeModel({ model: modelId });
 
-    let result: { response: { text: () => string } };
-    if (opts.imageBase64 && opts.mimeType) {
-      const fullPrompt = wantsJson
-        ? `${prompt}\n\nImportant: Return ONLY valid JSON, no markdown, no code blocks, just the raw JSON.`
-        : prompt;
-      result = await model.generateContent([
-        fullPrompt,
-        { inlineData: { data: opts.imageBase64, mimeType: opts.mimeType } }
-      ]);
-    } else {
-      const fullPrompt = wantsJson
-        ? `${prompt}\n\nImportant: Return ONLY valid JSON, no markdown, no code blocks, just the raw JSON.`
-        : prompt;
-      result = await model.generateContent(fullPrompt);
+      let result: { response: { text: () => string } };
+      if (opts.imageBase64 && opts.mimeType) {
+        const fullPrompt = wantsJson
+          ? `${prompt}\n\nImportant: Return ONLY valid JSON, no markdown, no code blocks, just the raw JSON.`
+          : prompt;
+        result = await model.generateContent([
+          fullPrompt,
+          { inlineData: { data: opts.imageBase64, mimeType: opts.mimeType } }
+        ]);
+      } else {
+        const fullPrompt = wantsJson
+          ? `${prompt}\n\nImportant: Return ONLY valid JSON, no markdown, no code blocks, just the raw JSON.`
+          : prompt;
+        result = await model.generateContent(fullPrompt);
+      }
+
+      const text = result.response.text().trim();
+      if (wantsJson && text) return stripJsonMarkdown(text);
+      return text;
+    } catch (err) {
+      lastErr = err;
+      if (is429(err) && attempt < maxGeminiAttempts) {
+        const waitMs = 5200; // 5.2s to respect "retry in 4s"
+        console.warn("[LLM] Rate limited (429), retrying after", waitMs / 1000, "s");
+        await sleepMs(waitMs);
+        continue;
+      }
+      if (!is429(err)) cachedGeminiModelId = null;
+      console.error("[LLM] Gemini failed", (err as Error)?.message || err);
+      break;
     }
-
-    const text = result.response.text().trim();
-    if (wantsJson && text) return stripJsonMarkdown(text);
-    return text;
-  } catch (err) {
-    lastErr = err;
-    // If 404, clear cache so next request can try ListModels again (in case env changed)
-    cachedGeminiModelId = null;
-    console.error("[LLM] Gemini failed", (err as Error)?.message || err);
   }
 
   // 2) Fallback: OpenAI only if a real API key is set (not placeholder)

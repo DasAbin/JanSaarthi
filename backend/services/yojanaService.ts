@@ -83,85 +83,103 @@ export class YojanaService {
       }];
     }
 
-    // Use Gemini to score eligibility for each scheme
-    const results: EligibilityResult[] = [];
-
-    for (const scheme of this.schemes) {
-      const result = await this.scoreScheme(profile, scheme);
-      results.push(result);
+    // Single LLM call to score all schemes (stays within free-tier rate limit)
+    try {
+      const results = await this.scoreAllSchemesBatch(profile);
+      results.sort((a, b) => b.score - a.score);
+      return results.slice(0, 5);
+    } catch (error) {
+      console.error("[YojanaService] Batch scoring failed, using rule-based fallback:", error);
     }
 
-    // Sort by score descending and return top 5
-    results.sort((a, b) => b.score - a.score);
-    return results.slice(0, 5);
-  }
-
-  private async scoreScheme(profile: UserProfile, scheme: Scheme): Promise<EligibilityResult> {
-    const prompt = `Given this user profile and this scheme eligibility, score eligibility 0–100. Explain briefly why eligible or not. Return JSON only.
-
-User Profile:
-- Age: ${profile.age || "Not specified"}
-- Gender: ${profile.gender || "Not specified"}
-- Annual Income: ₹${profile.income || "Not specified"}
-- State: ${profile.state || "Not specified"}
-- District: ${profile.district || "Not specified"}
-- Caste Category: ${profile.caste || "Not specified"}
-- Occupation: ${profile.occupation || "Not specified"}
-- Ration Card Type: ${profile.rationCard || "Not specified"}
-- Disability: ${profile.disability ? "Yes" : "No"}
-- Married: ${profile.married ? "Yes" : "No"}
-- Education: ${profile.education || "Not specified"}
-- BPL Card: ${profile.bplCard ? "Yes" : "No"}
-- Farm Size: ${profile.farmSize || "Not specified"} acres
-
-Scheme:
-Name: ${scheme.name}
-Description: ${scheme.description}
-Eligibility Rules: ${scheme.eligibility_rules.join("; ")}
-Benefits: ${scheme.benefit}
-
-Return only this JSON (no other text):
-{
-  "score": <0-100 number>,
-  "eligible": <true or false>,
-  "reasons": ["brief reason 1", "reason 2", "reason 3"],
-  "documentsNeeded": ["Document 1", "Document 2"],
-  "howToApply": ["Step 1", "Step 2"]
-}`;
-
-    try {
-      const resultStr = await askLLM(prompt, { json: true });
-      const result = JSON.parse(resultStr);
-
-      return {
-        scheme,
-        score: typeof result.score === "number" ? result.score : 50,
-        eligible: result.eligible === true,
-        reasons: Array.isArray(result.reasons) ? result.reasons : ["Analysis completed"],
-        documentsNeeded: Array.isArray(result.documentsNeeded) 
-          ? result.documentsNeeded 
-          : scheme.documents_required,
-        howToApply: Array.isArray(result.howToApply) 
-          ? result.howToApply 
-          : scheme.steps
-      };
-    } catch (error) {
-      console.error(`[YojanaService] Error scoring scheme ${scheme.id}:`, error);
-      
-      // Fallback: Simple rule-based matching
+    // Fallback: rule-based scoring for all schemes
+    const results: EligibilityResult[] = this.schemes.map((scheme) => {
       const score = this.simpleRuleMatch(profile, scheme);
-      
       return {
         scheme,
         score,
         eligible: score >= 50,
-        reasons: score >= 50 
-          ? ["May be eligible based on basic criteria"] 
+        reasons: score >= 50
+          ? ["May be eligible based on basic criteria"]
           : ["May not meet all eligibility criteria"],
         documentsNeeded: scheme.documents_required,
         howToApply: scheme.steps
       };
+    });
+    results.sort((a, b) => b.score - a.score);
+    return results.slice(0, 5);
+  }
+
+  /** Score all schemes in one LLM call to avoid rate limits (e.g. 5 req/min free tier). */
+  private async scoreAllSchemesBatch(profile: UserProfile): Promise<EligibilityResult[]> {
+    const profileBlock = `User Profile:
+- Age: ${profile.age ?? "Not specified"}
+- Gender: ${profile.gender ?? "Not specified"}
+- Annual Income: ₹${profile.income ?? "Not specified"}
+- State: ${profile.state ?? "Not specified"}
+- District: ${profile.district ?? "Not specified"}
+- Caste Category: ${profile.caste ?? "Not specified"}
+- Occupation: ${profile.occupation ?? "Not specified"}
+- Ration Card Type: ${profile.rationCard ?? "Not specified"}
+- Disability: ${profile.disability ? "Yes" : "No"}
+- Married: ${profile.married ? "Yes" : "No"}
+- Education: ${profile.education ?? "Not specified"}
+- BPL Card: ${profile.bplCard ? "Yes" : "No"}
+- Farm Size: ${profile.farmSize ?? "Not specified"} acres`;
+
+    const schemesBlock = this.schemes
+      .map(
+        (s) =>
+          `[${s.id}] ${s.name}\nEligibility: ${s.eligibility_rules.join("; ")}\nBenefit: ${s.benefit}`
+      )
+      .join("\n\n");
+
+    const prompt = `You are an assistant helping Indian citizens find government schemes.
+${profileBlock}
+
+Schemes:
+${schemesBlock}
+
+For each scheme id, score eligibility 0–100 and explain briefly. Return a JSON array of objects with keys: "id", "score", "eligible", "reasons" (array of strings), "documentsNeeded" (array), "howToApply" (array). One object per scheme, same order as above. Return ONLY the JSON array, no other text.`;
+
+    const resultStr = await askLLM(prompt, { json: true });
+    const parsed = JSON.parse(resultStr) as Array<{
+      id: string;
+      score: number;
+      eligible: boolean;
+      reasons: string[];
+      documentsNeeded: string[];
+      howToApply: string[];
+    }>;
+
+    const schemeById = new Map(this.schemes.map((s) => [s.id, s]));
+    const results: EligibilityResult[] = [];
+    for (const item of parsed) {
+      const scheme = schemeById.get(item.id);
+      if (!scheme) continue;
+      results.push({
+        scheme,
+        score: typeof item.score === "number" ? item.score : 50,
+        eligible: item.eligible === true,
+        reasons: Array.isArray(item.reasons) ? item.reasons : ["Analysis completed"],
+        documentsNeeded: Array.isArray(item.documentsNeeded) ? item.documentsNeeded : scheme.documents_required,
+        howToApply: Array.isArray(item.howToApply) ? item.howToApply : scheme.steps
+      });
     }
+    // If LLM skipped some schemes, add them with rule-based score
+    for (const scheme of this.schemes) {
+      if (results.some((r) => r.scheme.id === scheme.id)) continue;
+      const score = this.simpleRuleMatch(profile, scheme);
+      results.push({
+        scheme,
+        score,
+        eligible: score >= 50,
+        reasons: score >= 50 ? ["May be eligible based on basic criteria"] : ["May not meet all eligibility criteria"],
+        documentsNeeded: scheme.documents_required,
+        howToApply: scheme.steps
+      });
+    }
+    return results;
   }
 
   private simpleRuleMatch(profile: UserProfile, scheme: Scheme): number {
@@ -218,5 +236,11 @@ Return only this JSON (no other text):
       name: s.name,
       category: s.category || "General"
     }));
+  }
+
+  async compareSchemes(schemeIds: string[]): Promise<Scheme[]> {
+    await this.loadSchemes();
+    const ids = new Set(schemeIds);
+    return this.schemes.filter((s) => ids.has(s.id)).slice(0, 5);
   }
 }

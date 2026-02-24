@@ -22,9 +22,12 @@ const Navbar = () => {
                     <div className="hidden md:block">
                         <div className="flex items-center space-x-8">
                             <NavLink href="/">Home</NavLink>
-                            <NavLink href="/simplify">Simplify</NavLink>
-                            <NavLink href="/yojana">Schemes</NavLink>
-                            <NavLink href="/learn">Learn</NavLink>
+                            <NavLink href="/#simplify">Simplify</NavLink>
+                            <NavLink href="/#yojana">Schemes</NavLink>
+                            <NavLink href="/#ask">Ask</NavLink>
+                            <NavLink href="/form-helper">Form Helper</NavLink>
+                            <NavLink href="/#compare">Compare</NavLink>
+                            <NavLink href="/#learn">Learn</NavLink>
                             <button className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition-all hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                                 Login
                             </button>
@@ -47,10 +50,13 @@ const Navbar = () => {
             {isMenuOpen && (
                 <div className="border-t border-slate-100 bg-white p-4 md:hidden">
                     <div className="space-y-1">
-                        <MobileNavLink href="/">Home</MobileNavLink>
-                        <MobileNavLink href="/simplify">Simplify</MobileNavLink>
-                        <MobileNavLink href="/yojana">Schemes</MobileNavLink>
-                        <MobileNavLink href="/learn">Learn</MobileNavLink>
+                        <MobileNavLink href="/" onClick={() => setIsMenuOpen(false)}>Home</MobileNavLink>
+                        <MobileNavLink href="/#simplify" onClick={() => setIsMenuOpen(false)}>Simplify</MobileNavLink>
+                        <MobileNavLink href="/#yojana" onClick={() => setIsMenuOpen(false)}>Schemes</MobileNavLink>
+                        <MobileNavLink href="/#ask" onClick={() => setIsMenuOpen(false)}>Ask</MobileNavLink>
+                        <MobileNavLink href="/form-helper" onClick={() => setIsMenuOpen(false)}>Form Helper</MobileNavLink>
+                        <MobileNavLink href="/#compare" onClick={() => setIsMenuOpen(false)}>Compare</MobileNavLink>
+                        <MobileNavLink href="/#learn" onClick={() => setIsMenuOpen(false)}>Learn</MobileNavLink>
                         <div className="pt-4">
                             <button className="w-full rounded-xl bg-indigo-600 py-3 font-bold text-white">Login</button>
                         </div>
@@ -70,9 +76,10 @@ const NavLink = ({ href, children }: { href: string; children: React.ReactNode }
     </Link>
 );
 
-const MobileNavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
+const MobileNavLink = ({ href, children, onClick }: { href: string; children: React.ReactNode; onClick?: () => void }) => (
     <Link
         href={href}
+        onClick={onClick}
         className="block rounded-lg px-3 py-2 text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-indigo-600"
     >
         {children}

@@ -69,3 +69,16 @@ export function ttsGet(text: string, lang = "en") {
   });
 }
 
+/** Ask: conversational Q&A about government schemes. */
+export function askQuestion(question: string, options?: { language?: string; userProfile?: Record<string, unknown> }) {
+  return api.post<{ answer: string; sources?: { schemeId?: string; schemeName?: string; excerpt?: string }[] }>(
+    "/api/ask",
+    { question, language: options?.language ?? "en", userProfile: options?.userProfile }
+  );
+}/** List schemes for comparison. */
+export function listSchemes() {
+  return api.get<{ schemes: { id: string; name: string; category?: string }[] }>("/api/yojana");
+}/** Compare schemes by IDs. */
+export function compareSchemes(schemeIds: string[]) {
+  return api.post<{ schemes: Array<Record<string, unknown>> }>("/api/yojana/compare", { schemeIds });
+}

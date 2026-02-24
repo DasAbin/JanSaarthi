@@ -118,7 +118,7 @@ export default function DocumentSimplifier() {
                     </div>
 
                     <div className="bg-indigo-50/50 rounded-lg p-4">
-                        <h3 className="text-md font-bold text-indigo-900 mb-2">Explain like I&apos;m 10</h3>
+                        <h3 className="text-md font-bold text-indigo-900 mb-2">Simplified Summary</h3>
                         <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{data.eli10}</p>
                     </div>
 

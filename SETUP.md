@@ -1,8 +1,8 @@
-# 🚀 LokSaarthi - Setup & Run Guide
+# 🚀 JanSaarthi - Setup & Run Guide
 
 ## Prerequisites
 
-Before running LokSaarthi, ensure you have:
+Before running JanSaarthi, ensure you have:
 
 - **Node.js** (v18 or higher) - [Download](https://nodejs.org/)
 - **npm** (comes with Node.js) or **yarn**
@@ -21,7 +21,7 @@ npm --version   # Should be 9+
 ### Step 1: Navigate to Project Directory
 
 ```bash
-cd lok-saarthi
+cd aiforbharat
 ```
 
 ### Step 2: Setup Backend
@@ -46,7 +46,7 @@ Open a **new terminal window** and run:
 
 ```bash
 # Navigate to frontend (from project root)
-cd lok-saarthi/frontend
+cd aiforbharat/frontend
 
 # Install dependencies
 npm install
@@ -127,14 +127,14 @@ npm run dev
 
 You should see:
 ```
-LokSaarthi backend running on http://localhost:4000
+JanSaarthi backend running on http://localhost:4000
 ```
 
 **Test the backend:**
 ```bash
 # In another terminal
 curl http://localhost:4000/api/health
-# Should return: {"status":"ok","service":"lok-saarthi-backend"}
+# Should return: {"status":"ok","service":"jan-saarthi-backend"}
 ```
 
 ---
@@ -188,13 +188,13 @@ Visit: **http://localhost:3000**
 
 **Terminal 1 - Backend:**
 ```bash
-cd lok-saarthi/backend
+cd aiforbharat/backend
 npm run dev
 ```
 
 **Terminal 2 - Frontend:**
 ```bash
-cd lok-saarthi/frontend
+cd aiforbharat/frontend
 npm run dev
 ```
 
@@ -203,19 +203,19 @@ npm run dev
 **Windows PowerShell:**
 ```powershell
 # Start backend in background
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd lok-saarthi/backend; npm run dev"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd aiforbharat/backend; npm run dev"
 
 # Start frontend in background
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd lok-saarthi/frontend; npm run dev"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd aiforbharat/frontend; npm run dev"
 ```
 
 **Linux/Mac:**
 ```bash
 # Start backend in background
-cd lok-saarthi/backend && npm run dev &
+cd aiforbharat/backend && npm run dev &
 
 # Start frontend in background
-cd lok-saarthi/frontend && npm run dev &
+cd aiforbharat/frontend && npm run dev &
 ```
 
 ---
@@ -230,7 +230,7 @@ curl http://localhost:4000/api/health
 
 Expected response:
 ```json
-{"status":"ok","service":"lok-saarthi-backend"}
+{"status":"ok","service":"jan-saarthi-backend"}
 ```
 
 ### Frontend Check

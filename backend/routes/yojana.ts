@@ -47,6 +47,25 @@ yojanaRouter.get("/:schemeId", async (req, res) => {
  * POST /api/yojana/check
  * Check eligibility for schemes based on user profile
  */
+/**
+ * POST /api/yojana/compare
+ * Compare multiple schemes side by side
+ */
+yojanaRouter.post("/compare", async (req, res) => {
+  try {
+    const { schemeIds } = req.body;
+    if (!Array.isArray(schemeIds) || schemeIds.length === 0) {
+      return res.status(400).json({ error: "schemeIds array is required" });
+    }
+
+    const schemes = await yojana.compareSchemes(schemeIds.map(String).slice(0, 5));
+    return res.json({ schemes });
+  } catch (err) {
+    console.error("[API ERROR]", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 yojanaRouter.post("/check", async (req, res) => {
   try {
     const profile = req.body as UserProfile;

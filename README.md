@@ -35,10 +35,11 @@ Citizens, especially in rural and low-connectivity regions, struggle to:
 JanSaarthi provides:
 - **Document Simplifier** for PDFs/images using OCR + LLM summarization.
 - **Scheme Eligibility Matcher (YojanaMatch)** that maps user profiles to relevant schemes.
-- **AI Form Helper** to explain each field of a form and how to fill it.
+- **Ask JanSaarthi** conversational Q&A about government schemes with voice input.
+- **Scheme Comparison** to compare 2–5 schemes side by side.
+- **AI Form Helper** to explain each field of a form, with download guide and voice playback.
 - **Voice I/O** with mic input and TTS output in local languages.
 - **Micro-learning modules** for civic and financial awareness.
-- **Offline knowledge packs** via JSON-based modules.
 
 ### High-level Features
 
@@ -161,8 +162,9 @@ npm run dev
 ```
 
 The backend starts on `http://localhost:4000` by default and exposes:
+- `POST /api/ask`
 - `POST /api/simplify`
-- `POST /api/yojana/check`
+- `GET /api/yojana`, `POST /api/yojana/check`, `POST /api/yojana/compare`
 - `POST /api/form-helper`
 - `POST /api/voice/stt`
 - `POST /api/voice/tts`
@@ -179,7 +181,7 @@ npm run dev
 ```
 
 The frontend starts on `http://localhost:3000` and provides:
-- **Home dashboard** with navigation to all flows.
+- **Integrated landing page** with all features inline: Simplify, Find Schemes, Ask JanSaarthi, Form Helper, Compare Schemes, Learn.
 - **Upload & Simplify** document flow.
 - **YojanaMatch** scheme eligibility checker.
 - **AI Form Helper**.
@@ -188,9 +190,20 @@ The frontend starts on `http://localhost:3000` and provides:
 
 ### API Overview
 
+- **POST `/api/ask`**
+  - Body: JSON `{ question, language?, userProfile? }`.
+  - Response: conversational answer about government schemes, with optional sources.
+
 - **POST `/api/simplify`**
   - Body: multipart/form-data with `file` (PDF/image), optional `language`, `mode`.
   - Response: simplified summary, ELI10 explanation, key points, steps, metadata.
+
+- **GET `/api/yojana`**
+  - Response: list of schemes `{ id, name, category }` for comparison.
+
+- **POST `/api/yojana/compare`**
+  - Body: JSON `{ schemeIds: string[] }`.
+  - Response: full scheme details for comparison.
 
 - **POST `/api/yojana/check`**
   - Body: JSON user profile (age, gender, income, state, occupation, etc.).
