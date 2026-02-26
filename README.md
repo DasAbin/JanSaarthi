@@ -2,6 +2,13 @@
 
 This repository contains the full-stack implementation of **JanSaarthi**, a voice-first, low-bandwidth platform that simplifies government documents, explains forms, identifies scheme eligibility, and teaches essential skills in local languages.
 
+### Submission Links (fill these before submitting)
+
+- **Project Summary**: This README (sections below)
+- **Demonstration (Demo Video Link)**: `TODO: paste YouTube/Drive link`
+- **Codebase (GitHub Repo Link)**: `TODO: paste GitHub repository link`
+- **Working Link (Live URL)**: `TODO: paste deployed URL (AWS)`
+
 ### 🚀 Quick Start
 
 **Get running in 3 steps:**
@@ -40,6 +47,21 @@ JanSaarthi provides:
 - **AI Form Helper** to explain each field of a form, with download guide and voice playback.
 - **Voice I/O** with mic input and TTS output in local languages.
 - **Micro-learning modules** for civic and financial awareness.
+
+### Why this stands out (unique + real-world impact)
+
+- **Works in low-connectivity settings**: the platform still provides usable outputs even with **no AI keys** (offline fallback) and supports document text extraction without heavy dependencies.
+- **Voice-first UX**: designed for users with limited literacy—mic input + listen-back across key flows.
+- **Trust + transparency**: scheme matching includes eligibility reasoning + required documents + next steps.
+- **Deployable on AWS credits**: optional **AWS Bedrock** support so you can run the AI on AWS (no external API keys needed).
+
+### Ideal Demo Flow (2–3 minutes)
+
+1. **Ask JanSaarthi**: “Which schemes can help a low-income farmer in Bihar?” (voice or text)
+2. **YojanaMatch**: fill profile → show top matches + why + documents
+3. **Form Helper**: upload a form image → show field-by-field guidance + tips
+4. **Document Simplifier**: upload a PDF/image → show summary + ELI10 + steps
+5. Toggle language + “Listen” to show accessibility
 
 ### High-level Features
 
@@ -171,6 +193,49 @@ The backend starts on `http://localhost:4000` by default and exposes:
 - `GET /api/learn/:moduleId`
 
 > NOTE: OCR, Gemini, ChromaDB, Google TTS and Vosk integrations are implemented via service abstractions with environment-variable-based configuration. See inline `TODO` comments for wiring credentials and installing native dependencies for your OS.
+
+### “Works without API keys” mode (important for judging)
+
+JanSaarthi is designed to **run in a fully working demo mode even with zero AI keys**:
+
+- **LLM**: falls back to a local/offline heuristic responder when no keys are set
+- **OCR**: uses `pdf-parse` for text-based PDFs and `tesseract.js` for images (no Python required)
+
+If you DO add keys, the output quality improves (Gemini/OpenAI) and you can optionally use **AWS Bedrock** (recommended for AWS credits).
+
+### AWS Deployment (recommended: single URL via Docker on AWS)
+
+We provide a production-ready `docker-compose.yml` + Nginx reverse proxy so you get **one working URL** that serves:
+
+- Frontend at `/`
+- Backend at `/api/*`
+- Uploaded files at `/static/*`
+
+#### Option A: AWS EC2 (fastest for hackathons)
+
+1. Create an EC2 Ubuntu instance (t3.small or higher), open inbound **HTTP 80** and **SSH 22**
+2. Install Docker + Docker Compose plugin
+3. Clone your repo on the instance
+4. Run:
+
+```bash
+docker compose up -d --build
+```
+
+5. Visit: `http://<EC2_PUBLIC_IP>/`
+
+#### Option B: Use AWS Bedrock (no external API keys)
+
+Set these environment variables for the backend (in your compose/host env):
+
+```env
+AWS_REGION=us-east-1
+BEDROCK_MODEL_ID=anthropic.claude-3-haiku-20240307-v1:0
+```
+
+Then redeploy/restart the backend.
+
+> IAM: The instance/task role must allow `bedrock:InvokeModel` / `bedrock:Converse` for the chosen model.
 
 ### Running the Frontend
 

@@ -38,10 +38,15 @@ async function saveMeta(): Promise<void> {
 
 /**
  * Hash file contents for cache key (SHA-256, first 16 chars).
+ * Optionally includes language so the same file can be simplified in multiple languages.
  */
-export async function hashFile(filePath: string): Promise<string> {
+export async function hashFile(filePath: string, language?: string): Promise<string> {
   const buf = await fs.readFile(filePath);
-  return crypto.createHash("sha256").update(buf).digest("hex").slice(0, 16);
+  const h = crypto.createHash("sha256");
+  if (language) {
+    h.update(`${language}|`);
+  }
+  return h.update(buf).digest("hex").slice(0, 16);
 }
 
 /**

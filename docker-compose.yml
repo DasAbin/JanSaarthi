@@ -1,0 +1,44 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - PORT=4000
+      # Optional (recommended on AWS): use Bedrock with IAM role credentials
+      # - AWS_REGION=us-east-1
+      # - BEDROCK_MODEL_ID=anthropic.claude-3-haiku-20240307-v1:0
+      # Optional: Gemini/OpenAI (alternative)
+      # - GEMINI_API_KEY=...
+      # - OPENAI_API_KEY=...
+      # OCR configuration
+      - OCR_ENGINE=paddleocr
+      - OCR_FAST=true
+    volumes:
+      # Persist uploads/knowledge locally (handy for dev + EC2)
+      - ./backend/storage:/app/storage
+    expose:
+      - "4000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      # Empty means "same origin" (nginx proxies /api to backend)
+      - NEXT_PUBLIC_BACKEND_URL=
+    expose:
+      - "3000"
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
+

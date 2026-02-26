@@ -7,6 +7,7 @@ import { Chunker } from "../utils/chunker";
 import { storagePath } from "../utils/storage";
 import { getCachedSimplify, setCachedSimplify, hashFile } from "../utils/cache";
 import { askLLM } from "./llm";
+import { languageInstruction } from "../utils/language";
 
 export type SimplifyRequest = {
   filePath: string;
@@ -33,8 +34,9 @@ export class SimplifyService {
   async simplifyDocument(req: SimplifyRequest): Promise<SimplifyResponse> {
     const { filePath, originalName, language } = req;
 
-    // Cache: hash PDF and check cache (low-bandwidth, faster repeat requests)
-    const hashKey = await hashFile(filePath);
+    // Cache: hash PDF + language and check cache (low-bandwidth, faster repeat requests).
+    // Including language ensures English vs Hindi summaries don't clash.
+    const hashKey = await hashFile(filePath, language);
     const cached = await getCachedSimplify(hashKey);
     if (cached) {
       console.log(`[SimplifyService] Cache hit for ${originalName}`);
@@ -161,12 +163,7 @@ ${rawText.slice(0, 2000)}...
     language: string
   ): Promise<{ summary: string; eli10: string; keyPoints: string[]; steps: string[] }> {
     const truncated = fullText.slice(0, 12000);
-    const langInstr =
-      language === "hi"
-        ? "Respond in Hindi (हिंदी में जवाब दें)."
-        : language === "mr"
-          ? "Respond in Marathi (मराठी मध्ये उत्तर द्या)."
-          : "Respond in simple English.";
+    const langInstr = languageInstruction(language);
     const prompt = `You are a helpful assistant that simplifies government documents for rural citizens.
 ${langInstr}
 Document: ${documentName}

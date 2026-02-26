@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import { storagePath } from "../utils/storage";
 import { askLLM } from "./llm";
+import { languageInstruction } from "../utils/language";
 
 export type AskRequest = {
   question: string;
@@ -36,12 +37,7 @@ export class AskService {
 
     await this.loadSchemes();
 
-    const langInstr =
-      language === "hi"
-        ? "Respond in Hindi (हिंदी में जवाब दें)."
-        : language === "mr"
-          ? "Respond in Marathi (मराठी मध्ये उत्तर द्या)."
-          : "Respond in simple English.";
+    const langInstr = languageInstruction(language);
 
     const schemesContext = this.schemes
       .slice(0, 15)

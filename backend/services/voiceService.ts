@@ -43,6 +43,12 @@ export type TtsResponse = {
 };
 
 export class VoiceService {
+  /** Whether heavy Indic-Parler-TTS Python pipeline is enabled. Disabled by default. */
+  private indicTtsEnabled(): boolean {
+    const flag = (process.env.INDIC_TTS_ENABLED || "").toLowerCase();
+    return flag === "true" || flag === "1";
+  }
+
   /**
    * Get Python executable path, resolving relative paths from backend/ directory.
    */
@@ -171,22 +177,26 @@ export class VoiceService {
       };
     }
 
-    // 1) Indic-Parler-TTS (local, free, offline)
-    try {
-      const parlerBase64 = await this.generateParlerTTS(text, lang);
-      if (parlerBase64) {
-        return {
-          audioBase64: parlerBase64,
-          format: "audio/wav",
-          language: languageCode,
-          engine: "parler"
-        };
+    // 1) Indic-Parler-TTS (optional, heavy). Off by default unless INDIC_TTS_ENABLED=true.
+    if (this.indicTtsEnabled()) {
+      try {
+        const parlerBase64 = await this.generateParlerTTS(text, lang);
+        if (parlerBase64) {
+          return {
+            audioBase64: parlerBase64,
+            format: "audio/wav",
+            language: languageCode,
+            engine: "parler"
+          };
+        }
+      } catch (error) {
+        console.error("[VoiceService] Indic-Parler-TTS error:", error);
       }
-    } catch (error) {
-      console.error("[VoiceService] Indic-Parler-TTS error:", error);
+    } else {
+      console.log("[VoiceService] Indic-Parler-TTS disabled (INDIC_TTS_ENABLED is not true); using browser TTS.");
     }
 
-    // 2) Return empty — frontend uses browser TTS (offline fallback)
+    // 2) Return empty — frontend uses browser TTS (offline/lightweight fallback)
     return {
       audioBase64: "",
       format: "audio/wav",

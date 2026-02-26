@@ -1,6 +1,7 @@
 import { embeddingService } from "./embeddings";
 import { askLLM } from "./llm";
 import { Chunk } from "../utils/chunker";
+import { languageInstruction } from "../utils/language";
 
 export type StoredChunk = {
   id: string;
@@ -106,14 +107,8 @@ export class RagService {
     const context = contextChunks.map((c) => c.text).join("\n\n---\n\n");
     const truncatedText = originalText.slice(0, 8000);
 
-    const languageInstruction = language === "hi" 
-      ? "Respond in Hindi (हिंदी में जवाब दें)."
-      : language === "mr"
-        ? "Respond in Marathi (मराठी मध्ये उत्तर द्या)."
-        : "Respond in simple English.";
-
     const prompt = `You are a helpful assistant that simplifies government documents for rural citizens.
-${languageInstruction}
+${languageInstruction(language)}
 
 Document: ${documentName || "Government Document"}
 
@@ -170,14 +165,8 @@ Make the explanation practical and actionable. Focus on what matters to a common
 
     const context = results.map((r) => r.chunk.text).join("\n\n");
     
-    const languageInstruction = language === "hi" 
-      ? "Answer in Hindi (हिंदी में जवाब दें)."
-      : language === "mr"
-        ? "Answer in Marathi (मराठी मध्ये उत्तर द्या)."
-        : "Answer in simple English.";
-
     const prompt = `Based on the following context, answer the question.
-${languageInstruction}
+${languageInstruction(language)}
 
 Context:
 ${context}

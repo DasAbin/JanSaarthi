@@ -1,5 +1,6 @@
 import { OcrService } from "./ocrService";
 import { askLLM } from "./llm";
+import { languageInstruction } from "../utils/language";
 
 export type FormField = {
   field: string;
@@ -38,15 +39,8 @@ export class FormService {
     const { cleanedText, engine } = ocrResult;
     console.log(`[FormService] OCR complete using ${engine}. Text length: ${cleanedText.length}`);
 
-    // Step 2: Use Gemini to analyze form fields
-    const languageInstruction = language === "hi"
-      ? "Respond in Hindi (हिंदी में जवाब दें)."
-      : language === "mr"
-        ? "Respond in Marathi (मराठी मध्ये उत्तर द्या)."
-        : "Respond in simple English.";
-
     const prompt = `You are a helpful assistant that explains government form fields to rural citizens in India.
-${languageInstruction}
+${languageInstruction(language)}
 
 I extracted the following text from a government form:
 

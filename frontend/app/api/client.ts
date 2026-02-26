@@ -1,10 +1,13 @@
 import axios from "axios";
 
+const ENV_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "").trim();
+// Default to same-origin in the browser (works behind a reverse proxy on AWS)
+// and localhost in server/SSR contexts.
 const BACKEND_BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
+  ENV_URL || (typeof window !== "undefined" ? "" : "http://localhost:4000");
 
 export const api = axios.create({
-  baseURL: BACKEND_BASE_URL
+  baseURL: BACKEND_BASE_URL || undefined
 });
 
 export function simplifyDocument(payload: {

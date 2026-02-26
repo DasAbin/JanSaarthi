@@ -434,6 +434,50 @@ npm run lint     # Run ESLint
 
 ---
 
+## 🐳 One-URL Deployment with Docker (Recommended for AWS)
+
+This repo includes a ready `docker-compose.yml` + Nginx reverse proxy so evaluators get **one working URL**.
+
+### Run locally with Docker
+
+From the repo root:
+
+```bash
+docker compose up -d --build
+```
+
+Open:
+- `http://localhost/` (frontend)
+- `http://localhost/api/health` (backend health)
+
+### Deploy to AWS EC2 (recommended)
+
+1. Launch an EC2 instance (Ubuntu)
+2. Allow inbound **HTTP 80** and **SSH 22**
+3. Install Docker + Compose, clone repo
+4. Run:
+
+```bash
+docker compose up -d --build
+```
+
+Your working link will be:
+
+`http://<EC2_PUBLIC_IP>/`
+
+### Using AWS Bedrock (uses AWS credits; no external LLM keys)
+
+Set on the backend container/host:
+
+```env
+AWS_REGION=us-east-1
+BEDROCK_MODEL_ID=anthropic.claude-3-haiku-20240307-v1:0
+```
+
+Ensure the instance/task IAM role has permission for Bedrock invoke/converse.
+
+---
+
 ## 📚 Next Steps
 
 1. ✅ Both servers running

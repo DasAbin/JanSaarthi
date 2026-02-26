@@ -78,23 +78,25 @@ def generate_speech(text: str, lang: str) -> bytes:
     
     try:
         import torch
-        from transformers import AutoProcessor
-        
-        # Auto-detect speaker description from text (or use default)
-        description = f"A {tts_lang} speaker"
-        
-        # Tokenize inputs
-        input_ids = tokenizer(text, return_tensors="pt").input_ids.to(device)
-        description_ids = description_tokenizer(description, return_tensors="pt").input_ids.to(device)
-        
-        # Generate speech
+
+        # Prompt (transcript) and description (voice style) follow HuggingFace model card.
+        prompt = text
+        description = f"A {tts_lang} speaker with a clear, neutral, medium-speed voice suitable for public service explanations."
+
+        # Tokenize description and prompt separately
+        description_inputs = description_tokenizer(description, return_tensors="pt").to(device)
+        prompt_inputs = tokenizer(prompt, return_tensors="pt").to(device)
+
+        # Generate speech (no description_ids kwarg; use prompt_* as per latest Parler-TTS API)
         with torch.no_grad():
             generation = model.generate(
-                input_ids=input_ids,
-                description_ids=description_ids,
+                input_ids=description_inputs.input_ids,
+                attention_mask=description_inputs.attention_mask,
+                prompt_input_ids=prompt_inputs.input_ids,
+                prompt_attention_mask=prompt_inputs.attention_mask,
                 max_new_tokens=1024,
             )
-        
+
         # Extract audio
         audio_array = generation.cpu().numpy().squeeze()
         
